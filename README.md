@@ -6,6 +6,8 @@ Run delete queries on one or more databases in a given environment. This is usef
 
 ```bash
 go build -o laprune main.go
+touch db.json
+vim db.json # use db.example.json as reference
 ./laprune
 ```
 
