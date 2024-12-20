@@ -1,0 +1,40 @@
+{
+  "environment": "staging",
+  "databases": [
+    {
+      "name": "aws-server-es1",
+      "vendor": "mongodb",
+      "uri": "mongodb://user:password@localhost:27017/mydatabase/?connectTimeoutMS=300000&authSource=aDifferentAuthDB",
+      "database": "mydatabase",
+      "collection": "users"
+    },
+    {
+      "name": "digital-ocean-nyc1",
+      "vendor": "postgres",
+      "uri": "postgres://user:secret@localhost:5432/mydatabasename",
+      "database": "",
+      "collection": ""
+    },
+    {
+      "name": "lenode-es1",
+      "vendor": "sqlite",
+      "uri": "sqlite:///absolute/path/to/db?mode=ro",
+      "database": "",
+      "collection": ""
+    },
+    {
+      "name": "aws-server-ws1",
+      "vendor": "mssql",
+      "uri": "mssql://username:password@server.com:1433/database_name",
+      "database": "",
+      "collection": ""
+    },
+    {
+      "name": "aws-server-es2",
+      "vendor": "mysql",
+      "uri": "mysql://user:password@localhost:3306/mydatabase",
+      "database": "",
+      "collection": ""
+    }
+  ]
+}
