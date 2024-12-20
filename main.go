@@ -3,8 +3,10 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
+	"path"
 	"strings"
 
 	internal "laprune/internal"
@@ -40,8 +42,10 @@ type SqlQueries struct {
 }
 
 func main() {
+	// Parse and validate args
+	databaseJsonFilePath, queriesSqlFilePath := parseAndValidateArgs(os.Args)
 	// Open json database file
-	file, err := os.Open("./db.json")
+	file, err := os.Open(databaseJsonFilePath)
 	if err != nil {
 		panic(err)
 	}
@@ -54,12 +58,12 @@ func main() {
 		panic(err)
 	}
 	// Start process
-	sqlQueries := readSqlSchema()
+	sqlQueries := readSqlSchema(queriesSqlFilePath)
 	executeSqlSchema(databases, sqlQueries)
 }
 
-func readSqlSchema() map[string][]string {
-	file, err := os.Open("./config/queries.sql")
+func readSqlSchema(sqlFilePath string) map[string][]string {
+	file, err := os.Open(sqlFilePath)
 	if err != nil {
 		panic(err)
 	}
@@ -119,4 +123,35 @@ func executeSqlSchema(databaseConfig DatabaseConfig, sqlQueries map[string][]str
 			}
 		}
 	}
+}
+
+func parseAndValidateArgs(args []string) (string, string) {
+	if len(args) != 3 {
+		panic(errors.New("You must provide both db.json and queries.sql path."))
+	}
+	var databaseJsonFilePath string = args[1]
+	var queriesSqlFilePath string = args[2]
+	if len(databaseJsonFilePath) == 0 {
+		panic(errors.New("db.json file was not provided."))
+	}
+	if len(queriesSqlFilePath) == 0 {
+		panic(errors.New("queries.sql file was not provided"))
+	}
+	// Check if arguments end with file name
+	if !strings.HasSuffix(databaseJsonFilePath, "db.json") {
+		databaseJsonFilePath = path.Join(databaseJsonFilePath, "db.json")
+	}
+	if !strings.HasSuffix(queriesSqlFilePath, "queries.sql") {
+		queriesSqlFilePath = path.Join(queriesSqlFilePath, "queries.sql")
+	}
+	// Check if files exist
+	_, err := os.Stat(databaseJsonFilePath)
+	if err != nil {
+		panic(errors.New(fmt.Sprintf("db.json file was not found at path: %s", databaseJsonFilePath)))
+	}
+	_, nErr := os.Stat(queriesSqlFilePath)
+	if nErr != nil {
+		panic(errors.New(fmt.Sprintf("queries.sql file was not found at path: %s", queriesSqlFilePath)))
+	}
+	return databaseJsonFilePath, queriesSqlFilePath
 }
